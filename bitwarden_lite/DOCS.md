@@ -32,8 +32,9 @@ either or both of:
 1. In Home Assistant go to **Settings → Apps → Install app**, open the
    three-dot menu, choose **Repositories** and add
    `https://github.com/grikomsn/ha-bitwarden`.
-2. Install **Bitwarden lite**. Home Assistant builds the image on the device,
-   which takes a few minutes the first time.
+2. Install **Bitwarden lite**. Home Assistant downloads the prebuilt image
+   (`ghcr.io/grikomsn/ha-bitwarden-lite`, signed with Cosign), which takes a
+   few minutes the first time.
 3. Fill in the options below, then start the app and watch the **Log** tab.
 
 ## Options
@@ -141,8 +142,10 @@ emails and passkey (WebAuthn) login only work on that hostname.
   backed up (`backup: cold`) so SQLite is copied consistently.
 - The data folder holds the vault's data-protection keys. Treat backups that
   include this app as sensitive, and set a backup password.
-- The app version follows the Bitwarden lite release it is built on. Updating
-  rebuilds the image on the device.
+- The app version follows the Bitwarden lite release it is built on, with a
+  fourth number for packaging-only changes (`2026.11.0.1`). Updates download
+  a new prebuilt image. Release notes:
+  <https://github.com/grikomsn/ha-bitwarden/releases>.
 
 ## Troubleshooting
 

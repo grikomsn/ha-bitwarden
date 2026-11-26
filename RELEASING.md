@@ -62,7 +62,8 @@ between the merge and the end of the build where a Supervisor may already
 offer the update but can't download it yet. Merge only when CI is green, so
 that the release build doesn't fail.
 
-To check a published image's signature:
+To check a published image's signature (needs Cosign 3 or later; the builder
+signs with Cosign 3, and Cosign 2 reports "no signatures found"):
 
 ```sh
 cosign verify ghcr.io/grikomsn/ha-bitwarden-lite:<version> \
