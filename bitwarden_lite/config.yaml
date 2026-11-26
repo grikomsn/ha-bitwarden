@@ -1,5 +1,5 @@
 name: Bitwarden lite
-version: "2026.11.0"
+version: "2026.11.0.1"
 slug: bitwarden_lite
 description: >-
   Official Bitwarden server (lite deployment), with optional
