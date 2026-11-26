@@ -1,6 +1,6 @@
-# Images are pinned by tag and multi-arch index digest. Dependabot updates
-# both. When the Bitwarden lite tag changes, also bump `version` in
-# config.yaml and add a CHANGELOG.md entry.
+# Images are pinned by tag and multi-arch index digest; Renovate updates both
+# (and `version` in config.yaml with the Bitwarden lite tag). Any change here
+# needs a version bump and a CHANGELOG.md entry: see RELEASING.md.
 
 FROM docker.io/tailscale/tailscale:v1.104.7@sha256:72c1e19e0aedca96b8533bbb0b4368564410ff20b17e53b804eb6c1f04a31be4 AS tailscale
 FROM docker.io/cloudflare/cloudflared:2026.11.2@sha256:55c7e3e8d89d5e8d20b75a82f3602cbf98e06db406e73e282073cfdc5a9a3af6 AS cloudflared

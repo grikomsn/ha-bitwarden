@@ -21,9 +21,34 @@ jobs:
           yamllint -d '{extends: relaxed, rules: {line-length: disable}}'
           repository.yaml bitwarden_lite/config.yaml bitwarden_lite/translations/ .github/
 
+  version:
+    name: Version and changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Install checker dependencies
+        # awesomeversion is pinned to the version Home Assistant's Supervisor
+        # uses to decide whether an update is newer.
+        run: |
+          python3 -m venv /tmp/venv
+          /tmp/venv/bin/pip install --quiet awesomeversion==25.8.0 PyYAML==6.0.4
+      - name: Check version
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          base="${PR_BASE:-$PUSH_BEFORE}"
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            /tmp/venv/bin/python .github/scripts/check_version.py
+          else
+            /tmp/venv/bin/python .github/scripts/check_version.py --base "$base"
+          fi
+
   build:
     runs-on: ubuntu-latest
-    needs: lint
+    needs: [lint, version]
     strategy:
       matrix:
         platform: [linux/amd64, linux/arm64]
