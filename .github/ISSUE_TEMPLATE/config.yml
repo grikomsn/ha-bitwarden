@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/grikomsn/ha-bitwarden/security/advisories/new
+    about: Report privately, not as a public issue.
+  - name: Bitwarden server or client bug
+    url: https://github.com/bitwarden/server/issues
+    about: Problems in Bitwarden itself, not in this Home Assistant packaging.
