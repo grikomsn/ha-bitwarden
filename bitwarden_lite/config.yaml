@@ -5,6 +5,9 @@ description: >-
   Official Bitwarden server (lite deployment), with optional
   Cloudflare Tunnel and Tailscale Serve/Funnel built in.
 url: https://github.com/grikomsn/ha-bitwarden/tree/main/bitwarden_lite
+# Signed multi-arch image published by .github/workflows/release.yaml; the
+# Supervisor pulls the tag matching `version`. See RELEASING.md.
+image: ghcr.io/grikomsn/ha-bitwarden-lite
 arch:
   - aarch64
   - amd64
