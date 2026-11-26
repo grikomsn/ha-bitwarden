@@ -13,6 +13,13 @@ COPY --from=cloudflared /usr/local/bin/cloudflared /usr/local/bin/
 COPY rootfs/ /
 RUN chmod 0755 /ha/*.sh
 
+# Upstream starts nginx as an unprivileged user without -e, so before reading
+# nginx.conf it tries the compiled-in error log under /var/lib/nginx and logs
+# "Permission denied" on every start. Point it at the error log nginx.conf
+# already uses. The grep fails the build if upstream changes that line.
+RUN sed -i 's#^command=nginx$#command=nginx -e /var/log/bitwarden/nginx/error.log#' /etc/supervisor.d/nginx.ini \
+  && grep -qx 'command=nginx -e /var/log/bitwarden/nginx/error.log' /etc/supervisor.d/nginx.ini
+
 # Wraps the upstream /entrypoint.sh: turns the app options into the
 # environment variables Bitwarden lite expects, then hands over to it.
 ENTRYPOINT ["/ha/run.sh"]
