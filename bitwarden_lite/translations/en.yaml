@@ -1,0 +1,63 @@
+configuration:
+  domain:
+    name: Domain
+    description: >-
+      Hostname clients use for the vault, without https://. For example
+      vault.example.com (Cloudflare) or vault.tail1234.ts.net (Tailscale).
+  installation_id:
+    name: Installation ID
+    description: From https://bitwarden.com/host/ (pick the region of your Bitwarden account).
+  installation_key:
+    name: Installation key
+    description: From https://bitwarden.com/host/. Treat it as a secret.
+  disable_registration:
+    name: Disable registration
+    description: Turn on after you have created your accounts, so nobody else can sign up.
+  admin_emails:
+    name: Admin emails
+    description: >-
+      Email addresses allowed into the System Administrator Portal at /admin.
+      Login is by emailed link, so SMTP must be configured.
+  smtp_host:
+    name: SMTP host
+  smtp_port:
+    name: SMTP port
+    description: Defaults to 587.
+  smtp_ssl:
+    name: SMTP implicit TLS
+    description: Turn on for implicit TLS (usually port 465).
+  smtp_username:
+    name: SMTP username
+  smtp_password:
+    name: SMTP password
+  smtp_reply_to:
+    name: Reply-to address
+    description: Defaults to no-reply@<domain>.
+  cloudflare_tunnel_token:
+    name: Cloudflare Tunnel token
+    description: >-
+      Token of a remote-managed tunnel from the Cloudflare dashboard. Leave
+      empty to disable. Route your public hostname to http://localhost:8080.
+  tailscale:
+    name: Tailscale
+    description: Join your tailnet as a separate node and serve the vault over HTTPS.
+  tailscale_auth_key:
+    name: Tailscale auth key
+    description: >-
+      Optional. Without it, the Log tab shows a login URL on first start.
+      Only needed until the node is logged in.
+  tailscale_hostname:
+    name: Tailscale hostname
+    description: Node name, giving https://<name>.<tailnet>.ts.net.
+  tailscale_funnel:
+    name: Tailscale Funnel
+    description: >-
+      Also expose the vault to the public internet through Tailscale Funnel.
+      Off means tailnet devices only (Serve).
+  env_vars:
+    name: Extra environment variables
+    description: >-
+      Any other Bitwarden setting, such as globalSettings__mail__smtp__startTls
+      or globalSettings__hibpApiKey. Applied last.
+network:
+  8080/tcp: Plain HTTP vault. Leave disabled unless another proxy needs to reach it through the host.

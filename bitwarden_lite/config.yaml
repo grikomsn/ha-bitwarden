@@ -1,0 +1,66 @@
+name: Bitwarden lite
+version: "2026.11.0"
+slug: bitwarden_lite
+description: >-
+  Official Bitwarden server (lite deployment), with optional
+  Cloudflare Tunnel and Tailscale Serve/Funnel built in.
+url: https://github.com/grikomsn/ha-bitwarden/tree/main/bitwarden_lite
+arch:
+  - aarch64
+  - amd64
+startup: application
+boot: auto
+# The upstream image ships its own entrypoint and supervisord, not S6, so
+# Docker's init (tini) is fine as PID 1.
+init: true
+timeout: 60
+# Bitwarden lite declares VOLUME /etc/bitwarden. Mounting the app's private
+# data folder there keeps the vault (SQLite, keys, attachments) in Home
+# Assistant's data folder, so it survives rebuilds and is included in backups.
+# The Supervisor's options.json therefore appears at /etc/bitwarden/options.json.
+map:
+  - type: data
+    path: /etc/bitwarden
+# SQLite must not be copied while it is being written to.
+backup: cold
+backup_exclude:
+  - "tailscale/logs/*"
+ports:
+  8080/tcp: null
+ports_description:
+  8080/tcp: >-
+    Plain HTTP vault. Leave disabled unless another proxy (for example the
+    Cloudflared app) needs to reach it through the host.
+watchdog: "http://[HOST]:[PORT:8080]/alive"
+options:
+  domain: ""
+  installation_id: ""
+  installation_key: ""
+  disable_registration: false
+  admin_emails: []
+  cloudflare_tunnel_token: ""
+  tailscale: false
+  tailscale_hostname: vault
+  tailscale_funnel: false
+  env_vars: []
+schema:
+  domain: str
+  installation_id: str
+  installation_key: password
+  disable_registration: bool
+  admin_emails:
+    - email
+  smtp_host: str?
+  smtp_port: port?
+  smtp_ssl: bool?
+  smtp_username: str?
+  smtp_password: password?
+  smtp_reply_to: email?
+  cloudflare_tunnel_token: password?
+  tailscale: bool
+  tailscale_auth_key: password?
+  tailscale_hostname: match(^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$)
+  tailscale_funnel: bool
+  env_vars:
+    - name: match(^[A-Za-z_][A-Za-z0-9_]*$)
+      value: str
