@@ -46,9 +46,9 @@ Dependencies are kept current by Renovate. See [RELEASING.md](RELEASING.md).
 
 ## Status
 
-Built and smoke-tested on amd64 (web vault, API, identity, Tailscale login,
-cloudflared start-up). Running it on aarch64 hardware such as the Home
-Assistant Green hasn't been verified yet. Feedback and issues are welcome.
+Running on a Home Assistant Green (aarch64), reached through both a
+Cloudflare Tunnel and Tailscale Serve. Every release is also built for amd64
+and aarch64 in CI and smoke-tested on amd64. Feedback and issues are welcome.
 
 ## Why Bitwarden lite and not Vaultwarden?
 
