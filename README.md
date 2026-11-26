@@ -36,6 +36,14 @@ The app's Dockerfile starts from `ghcr.io/bitwarden/lite`, adds the
 upstream entrypoint with [`run.sh`](bitwarden_lite/rootfs/ha/run.sh), which
 turns the app's options into Bitwarden's environment variables.
 
+## Releases
+
+Versions follow Bitwarden lite (`2026.11.0`), with a fourth number for
+packaging-only changes (`2026.11.0.1`). Each release publishes Cosign-signed
+`amd64`/`aarch64` images to `ghcr.io/grikomsn/ha-bitwarden-lite` and a
+[GitHub release](https://github.com/grikomsn/ha-bitwarden/releases).
+Dependencies are kept current by Renovate. See [RELEASING.md](RELEASING.md).
+
 ## Status
 
 Built and smoke-tested on amd64 (web vault, API, identity, Tailscale login,

@@ -1,0 +1,71 @@
+# Releasing
+
+Home Assistant decides everything from `version` in
+[`bitwarden_lite/config.yaml`](bitwarden_lite/config.yaml): the version users
+see, the image tag the Supervisor pulls, and whether an update is offered.
+
+## Version scheme
+
+```text
+<Bitwarden lite tag>[.<revision>]
+2026.11.0      Bitwarden lite 2026.11.0
+2026.11.0.1    same Bitwarden, first packaging change (scripts, Tailscale, cloudflared, options)
+2026.12.0      next Bitwarden lite release (revision resets)
+```
+
+Don't use a suffix like `2026.11.0-1`: the Supervisor compares versions with
+[AwesomeVersion](https://github.com/ludeeus/awesomeversion), which reads
+`-1` as a pre-release, so `2026.11.0-1` sorts *below* `2026.11.0` and users
+never see the update. The four-part form sorts correctly (checked with
+awesomeversion 25.8.0, the version the Supervisor pins).
+
+## What CI enforces
+
+`Version and changelog` in [CI](.github/workflows/ci.yaml) runs
+[`check_version.py`](.github/scripts/check_version.py) on every pull request:
+
+- `version` is the Bitwarden lite tag from the Dockerfile, optionally plus
+  `.<revision>`.
+- `bitwarden_lite/CHANGELOG.md` has a `## <version>` section.
+- If the Dockerfile instructions, `rootfs/`, or the options in `config.yaml`
+  changed, `version` must be higher than on `main`. The error message names
+  the version to use. Edits to comments, docs, translations and the `image`
+  key don't need a bump.
+
+## Dependency updates (Renovate)
+
+[Renovate](renovate.json) opens PRs on Monday mornings (UTC):
+
+| PR | What it changes | What you do |
+| --- | --- | --- |
+| **GitHub Actions** | Action versions and commit SHAs | Nothing. It merges itself when CI passes. |
+| **Bitwarden lite** | Dockerfile tag and digest, and `version` in `config.yaml` | Add a `## <new version>` CHANGELOG section, then merge. |
+| **Tailscale and cloudflared** | Dockerfile tag and digest | Bump `version` to the next revision (CI names it), add a CHANGELOG section, then merge. |
+
+## Publishing
+
+Merging to `main` runs the [Release workflow](.github/workflows/release.yaml)
+when `version` has no `v<version>` tag yet. It:
+
+1. Builds `amd64` and `aarch64` images natively with Home Assistant's
+   [builder actions](https://github.com/home-assistant/builder) and pushes
+   `ghcr.io/grikomsn/{amd64,aarch64}-ha-bitwarden-lite:<version>`.
+2. Publishes the multi-arch image `ghcr.io/grikomsn/ha-bitwarden-lite:<version>`
+   (and `latest`). Every image is signed with Cosign (keyless, GitHub OIDC).
+3. Creates the `v<version>` tag and a GitHub release with the CHANGELOG section.
+
+Tags are never overwritten: if a version is already published, the build is
+skipped.
+
+Once `image:` is set in `config.yaml`, there is a window of a few minutes
+between the merge and the end of the build where a Supervisor may already
+offer the update but can't download it yet. Merge only when CI is green, so
+that the release build doesn't fail.
+
+To check a published image's signature:
+
+```sh
+cosign verify ghcr.io/grikomsn/ha-bitwarden-lite:<version> \
+  --certificate-identity-regexp '^https://github\.com/grikomsn/ha-bitwarden/' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
